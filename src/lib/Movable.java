@@ -49,6 +49,7 @@ public abstract class Movable implements Runnable {
 		System.out.println("go()");
 		plan(getX(), getY(), xDestination, yDestination);
 		movement = new Thread(this);
+		movement.start();
 	}
 	
 	/**

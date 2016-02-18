@@ -8,7 +8,7 @@ import lib.Movable;
 
 public class Circle extends Movable implements MouseListener {
 	
-	static /*final*/ double SPEED = 1000; // pixles per second.
+	static /*final*/ double SPEED = 200; // pixles per second.
 	static double ACCELERATION = 2;
 	static /*final*/ int X = 300;
 	static /*final*/ int Y = 300;
