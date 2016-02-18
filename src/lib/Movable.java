@@ -1,22 +1,28 @@
 package lib;
 
 import java.awt.Point;
+import java.awt.geom.Point2D;
 import java.util.LinkedList;
 import java.util.Queue;
 
 public abstract class Movable implements Runnable {
 	
+	private double initialSpeed;
+	
 	private double speed;
 	private Thread movement;
-	Queue<Point> queue;
+	private double acceleration;
+	Queue<VelocityPoint> queue;
 	
 	private int xDestination;
 	private int yDestination;
 	
-	public Movable(double speed) {
+	public Movable(double speed, double acceleration) {
 		this.speed = speed;
-		movement = new Thread();
-		queue = new LinkedList<Point>();
+		initialSpeed = speed;
+		this.acceleration = acceleration;
+		movement = new Thread(this);
+		queue = new LinkedList<VelocityPoint>();
 	}
 	
 	public double getSpeed() {
@@ -43,7 +49,6 @@ public abstract class Movable implements Runnable {
 		System.out.println("go()");
 		plan(getX(), getY(), xDestination, yDestination);
 		movement = new Thread(this);
-		movement.start();
 	}
 	
 	/**
@@ -68,25 +73,30 @@ public abstract class Movable implements Runnable {
 			else {
 				y1 += ((int) Math.signum(y2 - y1));
 			}
-			queue.add(new Point(x1, y1));
+			queue.add(new VelocityPoint(x1, y1, Math.sqrt(Math.pow(initialSpeed, 2) +
+									2 * acceleration * (distance(x1, y1, xDestination, yDestination)))));
 		}
 	}
 	
 	private void move() {
 		System.out.println("move()");
-		Point p = null;
+		VelocityPoint p = null;
 		while (!queue.isEmpty()) {
 			p = queue.poll();
 			setLocation(p);
-			sleep();
+			sleep(p.velocity);
 		}
 	}
 	
-	private void setLocation(Point p) {
+	private void setLocation(Point2D p) {
 		if (p != null) { // Don't throw me a NullPointer, mate...
-			setX(p.x);
-			setY(p.y);
+			setX((int) p.getX());
+			setY((int) p.getY());
 		}
+	}
+	
+	private static double distance(int x1, int y1, int x2, int y2) {
+		return new Point(x1, y1).distance(x2, y2);
 	}
 	
 	protected abstract void setX(int x);
@@ -95,9 +105,9 @@ public abstract class Movable implements Runnable {
 	protected abstract int getX();
 	protected abstract int getY();
 	
-	private void sleep() {
+	private void sleep(double speed) {
 		try {
-			Thread.sleep((long) (1000 / getSpeed()));
+			Thread.sleep((long) (1000 / speed));
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
