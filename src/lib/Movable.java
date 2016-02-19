@@ -83,17 +83,18 @@ public abstract class Movable implements Runnable {
 		System.out.println("move()");
 		VelocityPoint p = null;
 		while (!queue.isEmpty()) {
+			System.out.println("Is moving bro");
 			p = queue.poll();
-			setLocation(p);
-			sleep(p.velocity);
+			if (p != null) { // Don't throw me a NullPointer, mate...
+				setLocation(p);
+				sleep(p.velocity);
+			}
 		}
 	}
 	
 	private void setLocation(Point2D p) {
-		if (p != null) { // Don't throw me a NullPointer, mate...
-			setX((int) p.getX());
-			setY((int) p.getY());
-		}
+		setX((int) p.getX());
+		setY((int) p.getY());
 	}
 	
 	private static double distance(int x1, int y1, int x2, int y2) {
@@ -108,7 +109,7 @@ public abstract class Movable implements Runnable {
 	
 	private void sleep(double speed) {
 		try {
-			Thread.sleep((long) (1000 / speed));
+			Thread.sleep((long) (1000 / Math.abs(speed)));
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
