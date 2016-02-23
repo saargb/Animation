@@ -14,13 +14,14 @@ public class Picture extends Movable implements MouseListener {
 	private int x;
 	private int y;
 	
-	static final int SPEED = 1000;
+	static final int XSPEED = 10;
+	static final int YSPEED = 10;
 	
 	private ImageIcon image;
 	private Component component;
 	
 	public Picture(String url, Component component) {
-		super(SPEED);
+		super(0, YSPEED, 0, 4);
 		this.component = component;
 		image = new ImageIcon(url);
 	}

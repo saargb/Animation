@@ -18,7 +18,7 @@ public class Circle extends Movable implements MouseListener {
 	private int radius;
 	
 	public Circle() {
-		super(1000);
+		super(0, 10, 0, 4);
 		x = X;
 		y = Y;
 		radius = RADIUS;

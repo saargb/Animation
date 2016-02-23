@@ -7,7 +7,9 @@ import static java.lang.Math.*;
 
 public abstract class Movable implements Runnable {
 	
-	private double acceleration;
+	private double xAcceleration;
+	private double yAcceleration;
+	
 	private double xSpeed;
 	private double ySpeed;
 	private Thread movement;
@@ -16,8 +18,9 @@ public abstract class Movable implements Runnable {
 	private int xDestination;
 	private int yDestination;
 	
-	public Movable(double xSpeed, double ySpeed, double acceleration) {
-		this.acceleration = acceleration;
+	public Movable(double xSpeed, double ySpeed, double xAcceleration, double yAcceleration) {
+		this.xAcceleration = xAcceleration;
+		this.yAcceleration = yAcceleration;
 		this.xSpeed = xSpeed;
 		this.ySpeed = ySpeed;
 		movement = new Thread();
@@ -72,8 +75,8 @@ public abstract class Movable implements Runnable {
 				y1 += ((int) signum(y2 - y1));
 			}
 			queue.add(new VectorPoint(x1, y1,
-					sqrt(pow(start.getVX(), 2) + 2 * acceleration * (x1 - start.x)),
-					sqrt(pow(start.getVY(), 2) + 2 * acceleration * (y1 - start.y))));
+					sqrt(pow(start.getVX(), 2) + 2 * xAcceleration * (x1 - start.x)),
+					sqrt(pow(start.getVY(), 2) + 2 * yAcceleration * (y1 - start.y))));
 			
 		}
 	}
