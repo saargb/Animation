@@ -5,10 +5,10 @@ import static java.lang.Math.*;
 
 public class Vector {
 	
-	private int x;
-	private int y;
+	private double x;
+	private double y;
 	
-	public Vector(int x, int y) {
+	public Vector(double x, double y) {
 		this.x = x;
 		this.y = y;
 	}
@@ -18,12 +18,7 @@ public class Vector {
 		y = point.y;
 	}
 
-	public Vector(double angle, double magnitude) {
-		x = (int) (cos(angle) * magnitude);
-		y = (int) (sin(angle) * magnitude);
-	}
-
-	public int getX() {
+	public double getX() {
 		return x;
 	}
 
@@ -31,7 +26,7 @@ public class Vector {
 //		this.x = x;
 //	}
 
-	public int getY() {
+	public double getY() {
 		return y;
 	}
 
@@ -40,7 +35,7 @@ public class Vector {
 //	}
 
 	public double getAngle() {
-		return ((int) y) / x;
+		return ((double) y) / x;
 	}
 
 //	public void setAngle(double angle) {

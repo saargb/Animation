@@ -3,24 +3,25 @@ package lib;
 import java.awt.Point;
 import java.util.LinkedList;
 import java.util.Queue;
+import static java.lang.Math.*;
 
 public abstract class Movable implements Runnable {
 	
-	private double speed;
+	private double acceleration;
+	private double xSpeed;
+	private double ySpeed;
 	private Thread movement;
-	Queue<Point> queue;
+	Queue<VectorPoint> queue;
 	
 	private int xDestination;
 	private int yDestination;
 	
-	public Movable(double speed) {
-		this.speed = speed;
+	public Movable(double xSpeed, double ySpeed, double acceleration) {
+		this.acceleration = acceleration;
+		this.xSpeed = xSpeed;
+		this.ySpeed = ySpeed;
 		movement = new Thread();
-		queue = new LinkedList<Point>();
-	}
-	
-	public double getSpeed() {
-		return speed;
+		queue = new LinkedList<VectorPoint>();
 	}
 	
 	public Point getDestination() {
@@ -41,7 +42,8 @@ public abstract class Movable implements Runnable {
 	
 	public void go() {
 		System.out.println("go()");
-		plan(getX(), getY(), xDestination, yDestination);
+		plan(new VectorPoint(getX(), getY(), xSpeed, ySpeed),
+				new Point(xDestination, yDestination));
 		movement = new Thread(this);
 		movement.start();
 	}
@@ -55,30 +57,34 @@ public abstract class Movable implements Runnable {
 		move();
 	}
 	
-	private void plan(int x1, int y1, int x2, int y2) {
+	private void plan(VectorPoint start, Point end) {
 		System.out.println("plan(...)");
 		if (!queue.isEmpty()) {
 			queue.clear();
 		}
-		double slope = Math.abs((y2 - y1) / ((double) x2 - x1));
+		int x1 = start.x, x2 = end.x, y1 = start.y, y2 = end.y;
+		double slope = abs((x2 - x1) / ((double) x2 - x1));
 		while (x1 != x2 || y1 != y2) {
-			if (Math.abs((y2 - y1) / ((double) x2 - x1)) < slope) {
-				x1 += ((int) Math.signum(x2 - x1));
+			if (abs((y2 - y1) / ((double) x2 - x1)) < slope) {
+				x1 += ((int) signum(x2 - x1));
 			}
 			else {
-				y1 += ((int) Math.signum(y2 - y1));
+				y1 += ((int) signum(y2 - y1));
 			}
-			queue.add(new Point(x1, y1));
+			queue.add(new VectorPoint(x1, y1,
+					sqrt(pow(start.getVX(), 2) + 2 * acceleration * (x1 - start.x)),
+					sqrt(pow(start.getVY(), 2) + 2 * acceleration * (y1 - start.y))));
+			
 		}
 	}
 	
 	private void move() {
 		System.out.println("move()");
-		Point p = null;
+		VectorPoint p = null;
 		while (!queue.isEmpty()) {
 			p = queue.poll();
 			setLocation(p);
-			sleep();
+			sleep(Math.max(p.getVX(), p.getVY()));
 		}
 	}
 	
@@ -95,9 +101,9 @@ public abstract class Movable implements Runnable {
 	protected abstract int getX();
 	protected abstract int getY();
 	
-	private void sleep() {
+	private void sleep(double speed) {
 		try {
-			Thread.sleep((long) (1000 / getSpeed()));
+			Thread.sleep((long) (1000 / speed));
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
